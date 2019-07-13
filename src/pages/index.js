@@ -1,15 +1,28 @@
-import React from "react"
+import React, { useState, useCallback } from "react"
 
 import Layout from "../components/layout"
 import Board from "../components/Board"
-import BoardState from "../lib/BoardState"
+import Game from "../lib/BoardState"
 
-const boardState = new BoardState(3)
+const game = new Game({ size: 3 })
 
-const IndexPage = () => (
-  <Layout>
-    <Board board={boardState} />
-  </Layout>
-)
+const IndexPage = () => {
+  const [board, setBoard] = useState(game.current)
+  const nextMove = useCallback(() => {
+    const allowed = board.allowedMoves()
+    if (allowed.length) setBoard(board.move(allowed[0]))
+  })
+
+  return (
+    <Layout>
+      <div>
+        <Board board={board} />
+      </div>
+      <div>
+        <button type="button" onClick={nextMove}>Next</button>
+      </div>
+    </Layout>
+  )
+}
 
 export default IndexPage

@@ -1,5 +1,7 @@
 .board {
   width: auto;
+  display: inline-table;
+  margin: 1em;
 }
 
 .board td {

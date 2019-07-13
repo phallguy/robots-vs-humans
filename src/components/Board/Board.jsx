@@ -9,26 +9,24 @@ function renderPawn(board, allowed, x, y) {
 
   if (!pawn) return null
 
-  return <Pawn pawn={pawn} allowed={allowed} />
+  return <Pawn key={pawn.id} pawn={pawn} allowed={allowed} />
 }
 
 const Board = ({ board }) => {
-  const allowed = board.allowedMoves("robot")
+  const allowed = board.allowedMoves()
 
   return (
-    <div>
-      <table className="board">
-        <tbody>
-          {board.mapY(y => (
-            <tr key={y}>
-              {board.mapX(x => (
-                <td key={x}>{renderPawn(board, allowed, x, y)}</td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <table className="board">
+      <tbody>
+        {board.mapY(y => (
+          <tr key={y}>
+            {board.mapX(x => (
+              <td key={x}>{renderPawn(board, allowed, x, y)}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
   )
 }
 

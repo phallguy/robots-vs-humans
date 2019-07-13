@@ -1,34 +1,57 @@
-class Position {
-  constructor(x, y) {
-    this.x = x
-    this.y = y
-  }
+let id = 100
+function uniqueId() {
+  return id++
 }
 
 class Pawn {
-  constructor({ position, status, type }) {
-    this.position = position
+  constructor({ x, y, status, type }) {
+    this.x = x
+    this.y = y
     this.status = status || "alive"
     this.type = type
+    this.id = uniqueId()
+  }
+
+  moveTo({ x, y }) {
+    return new Pawn({
+      type: this.type,
+      status: this.status,
+      x,
+      y,
+    })
+  }
+
+  die() {
+    return new Pawn({
+      type: this.type,
+      status: "dead",
+      x: null,
+      y: null,
+    })
   }
 }
 
-export default class BoardState {
-  constructor(size) {
+function generatePawns(size) {
+  const pawns = []
+
+  Array.from(Array(size)).forEach((_, x) => {
+    pawns.push(new Pawn({ x, y: size - 1, type: "human" }))
+    pawns.push(new Pawn({ x, y: 0, type: "robot" }))
+  })
+
+  return pawns
+}
+
+export class Board {
+  constructor({ size, pawns, turn }) {
     this.size = size
-    this.humans = Array.from(Array(size)).map(
-      (_, x) => new Pawn({ position: new Position(x, size - 1), type: "human" })
-    )
-    this.robots = Array.from(Array(size)).map(
-      (_, x) => new Pawn({ position: new Position(x, 0), type: "robot" })
-    )
+    this.turn = turn || "human"
+    this.pawns = pawns || generatePawns(size)
+    this.id = uniqueId()
   }
 
   pawnAt({ x, y }) {
-    return (
-      this.humans.find(p => p.position.x === x && p.position.y === y) ||
-      this.robots.find(p => p.position.x === x && p.position.y === y)
-    )
+    return this.pawns.find(p => p.x === x && p.y === y)
   }
 
   mapY(callback) {
@@ -39,24 +62,45 @@ export default class BoardState {
     return Array.from(Array(this.size)).map((_, x) => callback(x))
   }
 
-  allowedMoves(type) {
-    const direction = type === "robot" ? 1 : -1
-    const movers = this.pawns(type)
+  allowedMoves() {
+    const direction = this.turn === "robot" ? 1 : -1
     const allowed = []
 
-    movers.forEach(pawn => {
-      const { x, y } = pawn.position
+    this.pawns.forEach(pawn => {
+      const { type, x, y } = pawn
+
+      if (type !== this.turn) return
 
       if (this.canAttack({ pawn, x: x - 1, y: y + direction })) {
-        allowed.push({ pawn, x: x - 1, y: y + direction, direction, attack: true })
+        allowed.push({
+          pawn,
+          x: x - 1,
+          y: y + direction,
+          direction,
+          attack: true,
+          id: uniqueId(),
+        })
       }
 
       if (this.canAttack({ pawn, x: x + 1, y: y + direction })) {
-        allowed.push({ pawn, x: x + 1, y: y + direction, direction, attack: true })
+        allowed.push({
+          pawn,
+          x: x + 1,
+          y: y + direction,
+          direction,
+          attack: true,
+          id: uniqueId(),
+        })
       }
 
       if (!this.pawnAt({ x, y: y + direction })) {
-        allowed.push({ pawn, x, y: y + direction, direction })
+        allowed.push({
+          pawn,
+          x,
+          y: y + direction,
+          direction,
+          id: uniqueId(),
+        })
       }
     })
 
@@ -72,7 +116,40 @@ export default class BoardState {
     return true
   }
 
-  pawns(type) {
-    return type === "robot" ? this.robots : this.humans
+  move({ pawn, x, y }) {
+    const nextPawns = this.pawns.map(p => {
+      if (p === pawn) {
+        return p.moveTo({ x, y })
+      }
+
+      if (p.x === x && p.y === y) {
+        return p.die()
+      }
+
+      return p
+    })
+
+    return new Board({
+      turn: this.turn === "robot" ? "human" : "robot",
+      size: this.size,
+      pawns: nextPawns,
+    })
+  }
+
+  isGameOver() {
+    return this.allowedMoves().length === 0
+  }
+}
+
+export default class Game {
+  constructor({ size }) {
+    this.current = new Board({ size })
+  }
+
+  generate() {
+    const { current } = this
+    const allowed = current.allowedMoves()
+
+    return allowed.map(move => current.move(move))
   }
 }

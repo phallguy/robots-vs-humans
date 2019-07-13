@@ -6,13 +6,13 @@ function renderAllowed(pawn, allowed) {
   return allowed.map(move => {
     if (move.pawn !== pawn) return null
 
-    return <Move key={move} {...move} />
+    return <Move key={move.id} {...move} />
   })
 }
 
 const Move = ({ pawn, x, direction, attack }) => {
-  const { x: pawnX } = pawn.position
-  const heading = pawnX === x ? "down" : pawnX < x ? "left" : "right"
+  const { x: pawnX } = pawn
+  const heading = pawnX === x ? "down" : pawnX < x ? "right" : "left"
 
   return (
     <span
