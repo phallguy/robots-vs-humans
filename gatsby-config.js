@@ -1,6 +1,7 @@
 module.exports = {
   siteMetadata: {
     title: "Robots vs Humans",
+    description: "",
     author: "@phallguy @magoooooo",
   },
   plugins: [

@@ -22,12 +22,7 @@ module.exports = {
   rules: {
     quotes: [2, "double", "avoid-escape"],
     semi: [2, "never"],
-    "react/prop-types": [
-      2,
-      {
-        ignore: ["children"],
-      },
-    ],
+    "react/prop-types": "off",
     "react/sort-prop-types": ["error"],
     "react/sort-comp": "warn",
     "react/no-set-state": "warn",

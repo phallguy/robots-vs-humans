@@ -1,0 +1,16 @@
+.board {
+  width: auto;
+}
+
+.board td {
+  border: 1px solid hsla(0, 0%, 0%, 0.12);
+  text-align: center;
+  height: 1em;
+  position: relative;
+}
+
+.board td:empty:after {
+  content: ' ';
+  display: block;
+  height: 1em;
+}
