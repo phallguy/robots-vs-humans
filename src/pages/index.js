@@ -11,7 +11,10 @@ const IndexPage = () => {
   const [board, setBoard] = useState(game.current)
   const [boards, setBoards] = useState([])
   const [autoPlay, setAutoPlay] = useState(false)
-  const [training, setTraining] = useState(false)
+  const [optimal, setOptimal] = useState(true)
+  const [games, setGames] = useState(0)
+  const [wins, setWins] = useState({ black: 0, white: 0 })
+  const [winner, setWinner] = useState()
 
   const makeMove = useCallback(
     move => {
@@ -19,7 +22,16 @@ const IndexPage = () => {
         const nextBoard = board.playMove(move)
         setBoard(nextBoard)
         setBoards([board, ...boards])
-        if (nextBoard.isGameOver()) nextBoard.learn()
+        if (nextBoard.isGameOver()) {
+          setGames(games + 1)
+          setWins({
+            black: board.turn === "black" ? wins.black + 1 : wins.black,
+            white: board.turn === "white" ? wins.white + 1 : wins.white,
+          })
+          setWinner(board.turn)
+
+          nextBoard.learn()
+        }
       }
     },
     [board]
@@ -27,7 +39,7 @@ const IndexPage = () => {
 
   const play = useCallback(() => {
     if (board.isGameOver()) reset()
-    else makeMove(board[training ? "guessMove" : "guessOptimalMove"]())
+    else makeMove(board[optimal ? "guessOptimalMove" : "guessMove"]())
   }, [board])
 
   const reset = useCallback(() => {
@@ -56,21 +68,25 @@ const IndexPage = () => {
         <label>
           <input
             type="checkbox"
-            onChange={e => setTraining(e.target.checked)}
-            checked={training}
+            onChange={e => setOptimal(e.target.checked)}
+            checked={optimal}
           />
-          train
-        </label>
-        { ' ' }
+          optimal
+        </label>{" "}
         objects:
         {objectCount}
       </div>
+      <div>
+        Games played {games} Black: {wins.black} (
+        {(wins.black / games).toFixed(2) * 100}%) White: {wins.white} (
+        {(wins.white / games).toFixed(2) * 100}%)
+      </div>
+      <div>Last winner: {winner}</div>
       <br />
       <div>
         <Board board={board} onAllowed={makeMove} size="default" />
         <AllowedMoves allowed={board.allowedMoves()} />
       </div>
-      {board.isGameOver() && <h2>Winner: {board.nextTurn()}</h2>}
       <div>
         {false &&
           boards.map(board => (
