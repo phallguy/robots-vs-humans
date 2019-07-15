@@ -57,20 +57,17 @@ const IndexPage = () => {
     <Layout>
       <div>
         <button type="button" onClick={reset}>
-          Reset
-        </button>
-        <button type="button" onClick={play}>
-          Play
-        </button>
+          New Game
+        </button>{" "}
         <button type="button" onClick={toggleAutoPlay}>
           Auto Play
-        </button>
+        </button>{" "}
         <label>
           <input
             type="checkbox"
             onChange={e => setOptimal(e.target.checked)}
             checked={optimal}
-          />
+          />{" "}
           optimal
         </label>{" "}
         objects:
@@ -86,6 +83,11 @@ const IndexPage = () => {
       <div>
         <Board board={board} onAllowed={makeMove} size="default" />
         <AllowedMoves allowed={board.allowedMoves()} />
+      </div>
+      <div>
+        <button type="button" onClick={play}>
+          Next Move
+        </button>{" "}
       </div>
       <div>
         {false &&
