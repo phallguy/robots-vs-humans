@@ -1,4 +1,5 @@
 module.exports = {
+  pathPrefix:  "/robots-vs-humans",
   siteMetadata: {
     title: "Robots vs Humans",
     description: "",
