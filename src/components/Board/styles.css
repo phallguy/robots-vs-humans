@@ -1,18 +1,45 @@
 .board {
   width: auto;
   display: inline-table;
-  margin: 1em;
 }
 
-.board td {
+.board > tbody > tr > td {
   border: 1px solid hsla(0, 0%, 0%, 0.12);
   text-align: center;
   height: 1em;
+  line-height: 0;
   position: relative;
+  padding: 0.75em;
 }
 
-.board td:empty:after {
+.board th {
+  text-align: center;
+}
+
+.board > tbody > tr > td:empty:after {
   content: ' ';
-  display: block;
+  display: inline-block;
   height: 1em;
+  width: 1em;
+}
+
+.board-moves {
+  font-size: 0.5em;
+  margin: 0;
+  width: 100%;
+}
+
+.board-moves td {
+  border-left: 1px solid hsla(0, 0%, 0%, 0.12);
+  border-right: 1px solid hsla(0, 0%, 0%, 0.12);
+  text-align: center;
+}
+
+.board-size-small > tbody > tr > td {
+  padding: 0.25em;
+}
+
+.board-size-small > tbody > tr > td:empty:after {
+  height: 0.5em;
+  width: 0.5em;
 }
