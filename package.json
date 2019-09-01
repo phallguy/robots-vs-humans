@@ -41,7 +41,7 @@
     "publish-pages": "gh-pages -d public",
     "develop": "gatsby develop",
     "format": "prettier --write src/**/*.{js,jsx}",
-    "start": "npm run develop",
+    "start": "yarn run develop",
     "serve": "gatsby serve",
     "lint": "eslint --ext js --ext jsx .",
     "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\""
